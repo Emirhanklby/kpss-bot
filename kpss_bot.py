@@ -25,8 +25,8 @@ import google.generativeai as genai
 # ─────────────────────────────────────────
 # 🔑 BURAYA KENDİ KEY'LERİNİ GİR
 # ─────────────────────────────────────────
-TELEGRAM_TOKEN = "8755867962:AAE59SJSXVEiRuav4_PpxBcsBahAPnqaPu0"   # BotFather'dan al
-GEMINI_API_KEY = "AIzaSyDgcw8OCyUFjGYU77TNZoFhOjSJCKUvWfU"        # aistudio.google.com'dan al
+TELEGRAM_TOKEN = os.getenv("8755867962:AAE59SJSXVEiRuav4_PpxBcsBahAPnqaPu0")
+GEMINI_API_KEY = os.getenv("AIzaSyDgcw8OCyUFjGYU77TNZoFhOjSJCKUvWfU")
 # ─────────────────────────────────────────
 
 logging.basicConfig(
@@ -37,30 +37,61 @@ logging.basicConfig(
 # Gemini yapılandırması
 genai.configure(api_key=GEMINI_API_KEY)
 
-SYSTEM_PROMPT = """Sen bir KPSS sınav asistanısın. Görevin şunlardır:
+SYSTEM_PROMPT = """Sen bir KPSS sinav asistanisin. Gorev alanlarin:
 
-1. **Konu Alanları:** Tarih, Coğrafya ve Vatandaşlık konularında sorular sor ve açıklama yap.
+1. KONU ALANLARI - Sadece su konularda sorular sor ve aciklama yap:
 
-2. **Test Modu:** Kullanıcı "test" veya "soru sor" dediğinde 5 soruluk çoktan seçmeli test üret.
-   - Her soruyu A) B) C) D) E) şıklarıyla ver
-   - Kullanıcı cevapladıktan sonra doğru/yanlış bildir
-   - Yanlış cevaplarda KISA ama net açıklama yap
+   TARIH:
+   - İslamiyet Oncesi Turk Tarihi
+   - Turk-Islam Devletleri
+   - Osmanli Devleti Siyasi Gelismeleri
+   - Osmanli Kultur ve Uygarliği
+   - Kurtulus Savasi Sureci
+   - Ataturk İlke ve İnkilaplari
+   - Ataturk Donemi İc ve Dis Politika
+   - Cagdas Turk ve Dunya Tarihi
 
-3. **Özet Modu:** Kullanıcı "özet" veya "anlat" dediğinde konuyu madde madde, kısa özetle anlat.
+   COGRAFYA:
+   - Turkiye'nin Cografi Konumu
+   - Yer Sekilleri ve Dogal Ozellikler
+   - İklim ve Bitki Ortusu
+   - Nufus ve Yerlesme
+   - Tarim ve Ekonomik Faaliyetler
+   - Madenler ve Enerji Kaynaklari
+   - Ulasim ve Turizm
+   - Turkiye'nin Cografi Bolgeleri
 
-4. **Tekrar Modu:** Kullanıcı "tekrar" dediğinde daha önce yanlış yaptığı veya zor gelen konuları tekrar sor.
+   VATANDASLIK:
+   - Hukukun Temel Kavramlari
+   - Anayasa Hukuku
+   - Yasama Organi
+   - Yurutme Organi
+   - Yargi Sistemi
+   - Temel Hak ve Ozgurlukler
+   - İdare Hukuku
+   - Uluslararasi Kuruluslar
 
-5. **Serbest Soru:** Kullanıcının her sorusunu doğrudan cevapla.
+2. TEST MODU: Kullanici "test" veya "soru sor" dediginde 5 soruluk coktan secmeli test uret.
+   - Her soruyu A) B) C) D) E) siklarıyla ver
+   - Kullanici cevapladiktan sonra dogru/yanlis bildir
+   - Yanlis cevaplarda kisa ama net aciklama yap
+   - Dogru cevaplarda tebrik et
 
-6. **Telegram Formatı:** 
-   - Cevapların kısa ve öz olsun (Telegram için uygun)
+3. OZET MODU: Kullanici "ozet" veya "anlat" dediginde konuyu madde madde, kisa ozetle anlat.
+
+4. TEKRAR MODU: Kullanici "tekrar" dediginde daha once yanlis yaptigi veya zor gelen konulari tekrar sor.
+
+5. SERBEST SORU: Kullanicinin her sorusunu dogrudan cevapla.
+
+6. FORMAT:
+   - Cevaplar kisa ve oz olsun (Telegram icin uygun)
    - Emoji kullan ama abartma
-   - Başlıkları **kalın** yaz
-   - Listeler için • kullan
+   - Sorulari numaralandir
+   - Aciklamalar net ve anlasilir olsun
 
-7. **Motivasyon:** Zaman zaman kısa motivasyon cümleleri ekle.
+7. MOTİVASYON: Zaman zaman kisa motivasyon cumleleri ekle.
 
-Kullanıcı sana Türkçe yazacak, sen de Türkçe cevap ver."""
+Kullanici Turkce yazacak, sen de Turkce cevap ver."""
 
 # Kullanıcı başına konuşma geçmişi tutan sözlük
 conversation_history: dict[int, list] = {}
@@ -89,14 +120,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conversation_history[user_id] = []  # Yeni konuşma başlat
 
     await update.message.reply_text(
-        f"👋 Merhaba {user.first_name}!\n\n"
-        "Ben senin **KPSS Asistanın**'ım. 🎓\n\n"
-        "Tarih, Coğrafya ve Vatandaşlık konularında:\n"
-        "• Test çözebilirsin\n"
-        "• Konu özeti isteyebilirsin\n"
-        "• Soru sorabilirsin\n"
-        "• Tekrar yapabilirsin\n\n"
-        "Aşağıdaki menüyü kullanabilir veya direkt yazabilirsin. Başlayalım! 💪",
+        f"Merhaba {user.first_name}! 👋\n\n"
+        "Ben senin KPSS Asistanin! 🎓\n\n"
+        "Tarih, Cografya ve Vatandaslik konularinda:\n"
+        "- Test cozebilirsin\n"
+        "- Konu ozeti isteyebilirsin\n"
+        "- Soru sorabilirsin\n"
+        "- Tekrar yapabilirsin\n\n"
+        "Asagidaki menuyu kullanabilir veya direkt yazabilirsin. Baslayalim! 💪",
         reply_markup=MAIN_MENU,
     )
 
@@ -112,39 +143,52 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def konular(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📋 **Çalışabileceğin Konular:**\n\n"
-        "📜 **TARİH**\n"
-        "• Osmanlı Tarihi\n"
-        "• Kurtuluş Savaşı\n"
-        "• Atatürk İlke ve İnkılapları\n"
-        "• Cumhuriyet Tarihi\n\n"
-        "🗺️ **COĞRAFYA**\n"
-        "• Türkiye'nin Coğrafi Özellikleri\n"
-        "• İklim ve Bitki Örtüsü\n"
-        "• Nüfus ve Yerleşme\n"
-        "• Ekonomik Coğrafya\n\n"
-        "⚖️ **VATANDAŞLIK**\n"
-        "• Anayasa\n"
-        "• Devletin Temel Organları\n"
-        "• Temel Hak ve Özgürlükler\n"
-        "• Seçim Sistemi\n\n"
-        "Bir konu yaz veya 'test çöz' de! 🚀",
+        "📋 KPSS Konulari:\n\n"
+        "📜 TARİH\n"
+        "1. İslamiyet Oncesi Turk Tarihi\n"
+        "2. Turk-Islam Devletleri\n"
+        "3. Osmanli Devleti Siyasi Gelismeleri\n"
+        "4. Osmanli Kultur ve Uygarliği\n"
+        "5. Kurtulus Savasi Sureci\n"
+        "6. Ataturk İlke ve İnkilaplari\n"
+        "7. Ataturk Donemi İc ve Dis Politika\n"
+        "8. Cagdas Turk ve Dunya Tarihi\n\n"
+        "🗺 COGRAFYA\n"
+        "1. Turkiye'nin Cografi Konumu\n"
+        "2. Yer Sekilleri ve Dogal Ozellikler\n"
+        "3. İklim ve Bitki Ortusu\n"
+        "4. Nufus ve Yerlesme\n"
+        "5. Tarim ve Ekonomik Faaliyetler\n"
+        "6. Madenler ve Enerji Kaynaklari\n"
+        "7. Ulasim ve Turizm\n"
+        "8. Turkiye'nin Cografi Bolgeleri\n\n"
+        "⚖ VATANDASLIK\n"
+        "1. Hukukun Temel Kavramlari\n"
+        "2. Anayasa Hukuku\n"
+        "3. Yasama Organi\n"
+        "4. Yurutme Organi\n"
+        "5. Yargi Sistemi\n"
+        "6. Temel Hak ve Ozgurlukler\n"
+        "7. İdare Hukuku\n"
+        "8. Uluslararasi Kuruluslar\n\n"
+        "Bir konu yaz veya 'test coz' de! 🚀",
         reply_markup=MAIN_MENU,
     )
 
 
 async def yardim(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🆘 **Komutlar:**\n\n"
-        "/start - Botu başlat\n"
-        "/reset - Konuşmayı sıfırla\n"
+        "Komutlar:\n\n"
+        "/start - Botu baslat\n"
+        "/reset - Konusmayı sifirla\n"
         "/konular - Konu listesi\n\n"
-        "**Kullanım örnekleri:**\n"
-        "• *\"Osmanlıdan 5 soruluk test yap\"*\n"
-        "• *\"Anayasa konusunu özetle\"*\n"
-        "• *\"Atatürk ilkeleri nedir?\"*\n"
-        "• *\"Tekrar soru sor\"*\n"
-        "• *\"Coğrafyadan zor soru\"*",
+        "Kullanim ornekleri:\n"
+        "- Osmanlidan 5 soruluk test yap\n"
+        "- Anayasa konusunu ozetle\n"
+        "- Ataturk ilkeleri nedir?\n"
+        "- Tekrar soru sor\n"
+        "- Cografyadan zor soru\n"
+        "- Vatandasliktan karma test",
         reply_markup=MAIN_MENU,
     )
 
@@ -155,12 +199,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Menü butonlarını doğal dile çevir
     button_map = {
-        "📝 Test Çöz": "Bana 5 soruluk çoktan seçmeli KPSS testi yap. Tarih, Coğrafya veya Vatandaşlık konularından karışık olsun.",
-        "📚 Özet İste": "Hangi konuyu özetlemememi istersin? Seçenekler: Tarih, Coğrafya, Vatandaşlık",
-        "🔄 Tekrar": "Bana tekrar soruları sor, özellikle zor veya sık çıkan konulardan.",
-        "❓ Soru Sor": "Sana bir soru sormak istiyorum, hazır mısın?",
-        "📊 Konular": None,  # Özel handler
-        "🆘 Yardım": None,   # Özel handler
+        "📝 Test Çöz": "Bana 5 soruluk coktan secmeli KPSS testi yap. Tarih, Cografya ve Vatandaslik konularından karisik olsun.",
+        "📚 Özet İste": "Hangi konuyu ozetlemememi istersin? Tarih, Cografya veya Vatandaslik seceneklerinden birini sec.",
+        "🔄 Tekrar": "Bana tekrar sorular sor, ozellikle zor veya sik cikan konulardan.",
+        "❓ Soru Sor": "Sana bir soru sormak istiyorum, hazir misin?",
+        "📊 Konular": None,
+        "🆘 Yardım": None,
     }
 
     if user_text == "📊 Konular":
@@ -202,16 +246,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Telegram 4096 karakter sınırı
         if len(reply) > 4000:
-            # Uzun cevabı böl
             chunks = [reply[i:i+4000] for i in range(0, len(reply), 4000)]
             for chunk in chunks:
-                await update.message.reply_text(
-                    chunk, reply_markup=MAIN_MENU, parse_mode="Markdown"
-                )
+                await update.message.reply_text(chunk, reply_markup=MAIN_MENU)
         else:
-            await update.message.reply_text(
-                reply, reply_markup=MAIN_MENU, parse_mode="Markdown"
-            )
+            await update.message.reply_text(reply, reply_markup=MAIN_MENU)
 
     except Exception as e:
         logging.error(f"Hata: {e}")
