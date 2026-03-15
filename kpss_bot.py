@@ -25,8 +25,8 @@ import google.generativeai as genai
 # ─────────────────────────────────────────
 # 🔑 BURAYA KENDİ KEY'LERİNİ GİR
 # ─────────────────────────────────────────
-TELEGRAM_TOKEN = os.getenv("8755867962:AAE59SJSXVEiRuav4_PpxBcsBahAPnqaPu0")
-GEMINI_API_KEY = os.getenv("AIzaSyDgcw8OCyUFjGYU77TNZoFhOjSJCKUvWfU")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # ─────────────────────────────────────────
 
 logging.basicConfig(
