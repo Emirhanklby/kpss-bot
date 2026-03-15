@@ -25,8 +25,8 @@ import google.generativeai as genai
 # ─────────────────────────────────────────
 # 🔑 BURAYA KENDİ KEY'LERİNİ GİR
 # ─────────────────────────────────────────
-TELEGRAM_TOKEN = 8755867962:AAE59SJSXVEiRuav4_PpxBcsBahAPnqaPu0   # BotFather'dan al
-GEMINI_API_KEY = AIzaSyDgcw8OCyUFjGYU77TNZoFhOjSJCKUvWfU        # aistudio.google.com'dan al
+TELEGRAM_TOKEN = "8755867962:AAE59SJSXVEiRuav4_PpxBcsBahAPnqaPu0"   # BotFather'dan al
+GEMINI_API_KEY = "AIzaSyDgcw8OCyUFjGYU77TNZoFhOjSJCKUvWfU"        # aistudio.google.com'dan al
 # ─────────────────────────────────────────
 
 logging.basicConfig(
