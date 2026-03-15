@@ -78,7 +78,7 @@ MAIN_MENU = ReplyKeyboardMarkup(
 
 def get_model():
     return genai.GenerativeModel(
-        model_name="gemini-2.5-flash-lite-preview-06-17",
+        model_name="gemini-2.5-flash-lite",
         system_instruction=SYSTEM_PROMPT,
     )
 
