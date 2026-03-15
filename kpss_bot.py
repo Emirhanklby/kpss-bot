@@ -98,7 +98,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• Tekrar yapabilirsin\n\n"
         "Aşağıdaki menüyü kullanabilir veya direkt yazabilirsin. Başlayalım! 💪",
         reply_markup=MAIN_MENU,
-        parse_mode="Markdown",
     )
 
 
@@ -131,7 +130,6 @@ async def konular(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• Seçim Sistemi\n\n"
         "Bir konu yaz veya 'test çöz' de! 🚀",
         reply_markup=MAIN_MENU,
-        parse_mode="Markdown",
     )
 
 
@@ -148,7 +146,6 @@ async def yardim(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• *\"Tekrar soru sor\"*\n"
         "• *\"Coğrafyadan zor soru\"*",
         reply_markup=MAIN_MENU,
-        parse_mode="Markdown",
     )
 
 
